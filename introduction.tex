@@ -1,0 +1,42 @@
+\section{Introduction}
+Industrial anomaly detection (IAD) serves as a critical pillar of intelligent manufacturing, enabling automated quality inspection to identify defects ranging from micro-scratches to structural failures. 
+Its applications extend to critical scenarios such as aero-engine blade maintenance, where undetected defects could trigger catastrophic failures~\cite{intro1}. 
+However, real-world industrial environments are inherently complex: factors like varying illumination, viewpoint shifts, and unaligned samples pose significant challenges to the generalization of existing models~\cite{intro2}. 
+Traditional methods such as feature extraction using descriptors including SIFT, SURF, HOG heavily rely on manually designed features 
+and classic machine-learning techniques. For example, P. Viola and M. Jones developed Viola-Jones detector which leverages Haar features with integral images for rapid face detection~\cite{Viola-Jones}.
+Other methods such as Deformable Part Models(DPM) break objects into parts and model their spatial relations~\cite{DFM}.
+These approaches are limited to low-level patterns and have poor generalization to lighting, viewpoint and occlusion~\cite{why-traditional-bad}.
+
+Deep learning which learns features automatically via neural networks has become the most popular method for IAD recently 
+for its simplicity and better generalization abilities. Convolution Neural Networks(CNNs) based detectors like R-CNN and YOLO series
+achieve higher accuracy snd are robust to complex environmental variations~\cite{why-traditional-bad,survey-ml1}.
+
+J. Huang and C. Li et,al. developed a Vision Transformer(ViT)~\cite{VIT} based model, achieving an accuracy of 99.8\% on MVTec dataset~\cite{VIT-model1}.
+Besides that, P.Mishira and D. Fornasier developed another ViT-based model preserving the spatial information and embedded patches~\cite{VIT-model2}.
+Z. Zhang and Z.Zhao et, al published masked multi-scale reconstruction(MMR) model 
+achieved sample-level anomaly detection performance (AUROC\%) of 84.7\% on AeBAD-S dataset~\cite{MMR}. 
+
+Despite advancements in methods such as MMR, which enhances causal reasoning among image patches, limitations remain—particularly in handling diverse defect types, cross-domain adaptability, and robustness in dynamic scenarios.
+
+Existing IAD datasets and methods exhibit critical gaps. 
+Traditional datasets like MVTec AD and VisA~\cite{MVTec-1,MVTec-2,VisA} focus on aligned samples and consistent scales, overlooking the domain shifts prevalent in real inspections. 
+Even the AeBAD dataset, designed to address domain shifts, is limited to aero-engine blades, restricting its ability to validate models across diverse industrial objects. 
+Methods like MMR, while superior on AeBAD, struggle with generalization when faced with unseen defect types (e.g., blowholes in magnetic tiles or rail cracks) and dynamic video scenarios. 
+Additionally, synthetic anomaly generation (e.g., NSA) often fails in unaligned samples, leading to poor generalization.
+
+In order to solve these problems, the focus of this study is to improve the adaptability and robustness of MMR through three key innovations. 
+Firstly, we have integrated different industrial data sets to simulate cross-domain situations, especially AeBAD (for aero-engine blades with domain transfer), magnetic tile defect dataset (for ceramic defects such as blowholes and cracks)~\cite{MTD-dataset} and RSDDs (for track defects, such as fine cracks and penetration)~\cite{RSDDs}. 
+In order to deal with the specific changes of data sets, we adopt a domain adaptation strategy: for each data set, we preprocess the image with a uniform resolution (224×224), while retaining the original defect features, and use contrast learning to align the cross-domain feature distribution-this ensures that the model learns the defect pattern rather than the data set-specific deviation. 
+We further divide these data sets into training (70\%) and verification (30\%) sets. The training data covers all object types, and the verification data includes invisible combinations of objects and defects (for example, rail cracks in low light conditions) to test the generalization ability.
+
+Secondly，we enhance synthetic anomaly generation by leveraging DefectSpectrum~\cite{DefectSpectrum}, a flexible defect-generation model, to supplement rare or underrepresented defects. 
+For tiny defects (e.g., grooves in blades or rail micro-cracks), we adjust the model’s noise intensity and spatial distribution parameters to generate defects with sub-10px dimensions, 
+ensuring they mimic real-world subtlety. For large structural defects (e.g., blade fractures or tile breaks), we modify the generation pipeline to introduce irregular edges and depth variations, avoiding the overly smooth synthetic anomalies that plague methods like NSA. 
+Generated anomalies are blended into normal samples using Poisson image editing to maintain contextual consistency, and we control the ratio of synthetic-to-real data (1:3) during training to prevent overfitting to synthetic patterns.
+
+Thirdly，we optimize MMR’s architecture and loss function to enhance defect sensitivity. 
+For the ViT backbone, we replace the vanilla multi-head self-attention with a hybrid attention mechanism: local attention (3×3 window) to capture fine-grained defect details and global attention (sparse sampling) to model long-range spatial dependencies between defect and normal regions—this addresses MMR’s tendency to overlook tiny defects in large images. For the loss function, we extend the original multi-scale feature alignment loss by adding a weighted term: pixels corresponding to tiny defects (annotated via GT labels from datasets like Magnetic-tile-defect-datasets) are assigned 2× higher weight, forcing the model to prioritize these regions during reconstruction. We also introduce a contrastive loss between normal and abnormal feature embeddings, encouraging the model to amplify differences between them—this reduces false negatives in cases where defects are visually similar to normal patterns (e.g., rail rust vs. dark patches).
+
+This work makes three main contributions. The first aspect is that it expands MMR’s applicability beyond aero-engine blades, validating its performance across diverse industrial objects and defect types. Moreover，it proposes a multi-source data augmentation strategy that combines real datasets and synthetic defects, mitigating the challenge of limited abnormal samples. Lastly，it enhances MMR’s robustness to domain shifts and tiny defects, providing a more practical solution for real-world industrial inspection.
+
+By addressing these gaps, our research advances IAD from specialized scenarios to generalizable industrial applications, aligning with the need for reliable automated quality control.
