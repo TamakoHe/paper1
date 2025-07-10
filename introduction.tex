@@ -1,4 +1,17 @@
 \section{Introduction}
+% 铁路运输已经成为了一种重要的运输方式 铁路缺陷会造成什么损失 
+
+Rail transport plays a pivotal role in global logistics and infrastructure. 
+In 2023, rail freight services accounted for approximately 45.3\% of global tonne‑kilometres in China and 35.8\% in Russia, together representing over 80\% of worldwide rail freight activity~\cite{reportlinker_global_freight_2023}. 
+Worldwide, rail freight comprised about 16–18\% of all freight tonne‑kilometres as of 2020 . 
+In North America, rail moved nearly 40\% of domestic cargo by ton‑kilometre, making it a cost‑effective and energy‑efficient mode compared to road haulage~\cite{wiki_rail_freight_transport}.
+Given the heavy reliance on railways worldwide, ensuring the safety and reliability of track infrastructure is of paramount importance.
+Railway infrastructure remains vulnerable to track defects—such as broken rails, buckling, and cracks—which can lead to derailments, safety hazards, and significant delays. 
+In the United Kingdom during 2023, there were 938 separate track buckling events, disrupting over 100,000 train services, cancelling roughly 10,000 trains, causing 7,000 hours of delays, and costing the network an estimated £47 million~\cite{uk_track_buckling_2024}.
+In the United States, broken rails are one of the leading causes of derailments, which occur at a rate of about three per day on average, contributing to substantial costs in equipment damage, service interruptions, and liability.
+
+To promptly identify defects and prevent the adverse consequences caused by track defects, we need to develop solutions that enable fast and effective detection.
+Therefore, it is essential to develop reliable and efficient methods for early detection of track defects, aiming to enhance operational safety and minimize economic loss.
 Industrial anomaly detection (IAD) serves as a critical pillar of intelligent manufacturing, enabling automated quality inspection to identify defects ranging from micro-scratches to structural failures. 
 Its applications extend to critical scenarios such as aero-engine blade maintenance, where undetected defects could trigger catastrophic failures~\cite{intro1}. 
 However, real-world industrial environments are inherently complex: factors like varying illumination, viewpoint shifts, and unaligned samples pose significant challenges to the generalization of existing models~\cite{intro2}. 
@@ -24,8 +37,8 @@ Even the AeBAD dataset, designed to address domain shifts, is limited to aero-en
 Methods like MMR, while superior on AeBAD, struggle with generalization when faced with unseen defect types (e.g., blowholes in magnetic tiles or rail cracks) and dynamic video scenarios. 
 Additionally, synthetic anomaly generation (e.g., NSA) often fails in unaligned samples, leading to poor generalization.
 
-In order to solve these problems, the focus of this study is to improve the adaptability and robustness of MMR through three key innovations. 
-Firstly, we have integrated different industrial data sets to simulate cross-domain situations, especially AeBAD (for aero-engine blades with domain transfer), magnetic tile defect dataset (for ceramic defects such as blowholes and cracks)~\cite{MTD-dataset} and RSDDs (for track defects, such as fine cracks and penetration)~\cite{RSDDs}. 
+In order to solve these problems, the focus of this study is to improve the adaptability and robustness of MMR on various types of track defects through three key innovations. 
+Firstly, we have integrated different industrial data sets to simulate cross-domain situations, especially magnetic tile defect dataset (for ceramic defects such as blowholes and cracks)~\cite{MTD-dataset} and RSDDs (for track defects, such as fine cracks and penetration)~\cite{RSDDs}.
 In order to deal with the specific changes of data sets, we adopt a domain adaptation strategy: for each data set, we preprocess the image with a uniform resolution (224×224), while retaining the original defect features, and use contrast learning to align the cross-domain feature distribution-this ensures that the model learns the defect pattern rather than the data set-specific deviation. 
 We further divide these data sets into training (70\%) and verification (30\%) sets. The training data covers all object types, and the verification data includes invisible combinations of objects and defects (for example, rail cracks in low light conditions) to test the generalization ability.
 
